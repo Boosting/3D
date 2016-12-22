@@ -15,7 +15,7 @@ To Do
 * 3DMM (done)  
 * Pinhole camera model (done)  
 
-4. project
+4. project  
 [generate face Landmarks using SFM](https://github.com/YadiraF/3D/blob/master/_generateLandmarks_usingSFM.ipynb) (done)    
 [landmarks regression by TF] (to do)  
 
