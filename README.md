@@ -1,4 +1,5 @@
-# 3D
+3D  
+=============
 3D face 
 
 To Do 
@@ -7,11 +8,19 @@ To Do
 see report (done)  
 
 2. data  
-databases（to be added)  
+[databases](http://192.168.50.82:8886/notebooks/databases.ipynb)（to be added)  
 
 3. knowledge  
-+ 3DMM  
-[Fully Automatic Pose-Invariant Face Recognition via 3D Pose Normalization](https://cseweb.ucsd.edu/~ravir/6998/papers/p187-blanz.pdf)  
-(~~感觉是最基础的，今天就看这个了，好多数学公式的感觉~~ 太牛逼了，干货好多，看了个大概。。之后需要再啃下吧--11/25)  
+[3d_face_model](http://192.168.50.82:8886/notebooks/3d_face_model.ipynb)  
++ 3DMM (done)  
++ Pinhole camera model (done)
+
+4. project
+[generate face Landmarks using SFM](http://192.168.50.82:8886/notebooks/_generateLandmarks_usingSFM.ipynb) (done)  
+[landmarks regression by TF] (to do)  
+
+
+
+
 
 
