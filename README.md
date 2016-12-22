@@ -12,8 +12,8 @@ To Do
 
 3. knowledge  
 [3d_face_model](https://github.com/YadiraF/3D/blob/master/3d_face_model.ipynb)  
-* 3DMM (done)  
-* Pinhole camera model (done)  
+3DMM (done)  
+Pinhole camera model (done)  
 
 4. project  
 [generate face Landmarks using SFM](https://github.com/YadiraF/3D/blob/master/_generateLandmarks_usingSFM.ipynb) (done)    
