@@ -1,6 +1,6 @@
 import numpy as np
 import sys
-sys.path.append('./eos_maked/install/bin')
+sys.path.append('./eos_maked/bin/')
 import eos
 from common import *
 def read_txt(name):
@@ -112,21 +112,21 @@ def main_random():
 
 def main():
 	#fp=open('generated_landmarks/50_landmarks.txt','wb')
-	examples_num=3*71*31*71
+	examples_num=10*15*15*5
 	p_len=9
 	landmarks_2D_list=np.zeros((examples_num,2*p_len))
 	rotation_param_list=np.zeros((examples_num,3))
 	count=0
-	for k in range(20):
+	for k in range(10):
 		mu=2*np.random.random_sample()-1 #[-1,1]
 		sigma=np.random.random_sample()/2 #[0,0.5]
 		shape_param = np.random.normal(mu, sigma, 63)
 		# roll pitch yaw
-		for r in (np.arange(71)-35):
-			for p in (np.arange(31)-15):
-				for y in (np.arange(71)-35):
+		for r in np.arange(-35,36,5):
+			for p in np.arange(-10,11,5):
+				for y in np.arange(-35,36,5):
 					print count
-					rotation_param=[r,p,y]
+					rotation_param=[r+np.random.sample()*2,p+np.random.sample()*2,y+np.random.sample()*2]
 					landmarks_2D=get_2D_landmarks(shape_param,rotation_param)
 					landmarks_2D=np.reshape(landmarks_2D.T,(2*p_len))
 					#tmp=np.reshape(landmarks_2D.T,(2*50))
@@ -139,8 +139,8 @@ def main():
 
 	#fp.close()
 	print '----save lists----'
-	np.save('generated_landmarks/landmarks_9.npy',landmarks_2D_list)			
-	np.save('generated_landmarks/rotation_param_9.npy',rotation_param_list)
+	np.save('generated_landmarks/landmarks_9_11250.npy',landmarks_2D_list)			
+	np.save('generated_landmarks/rotation_param_9_11250.npy',rotation_param_list)
 
 if __name__ == '__main__':
 	main_random()
