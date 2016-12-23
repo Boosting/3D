@@ -4,7 +4,11 @@ Date: 2016/12/22
 '''
 import numpy as np
 import sys
+<<<<<<< HEAD
 sys.path.append('./eos-maked/bin/')
+=======
+sys.path.append('eos-maked/bin/')
+>>>>>>> 20921d10cc62593895c9c574bf51bb100ce30e6d
 import eos
 from common import *
 #import matplotlib.pyplot as plt
