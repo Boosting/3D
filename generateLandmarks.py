@@ -1,6 +1,6 @@
 import numpy as np
 import sys
-sys.path.append('./eos_maked/bin/')
+sys.path.append('eos-maked/bin/')
 import eos
 from common import *
 def read_txt(name):
