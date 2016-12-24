@@ -151,10 +151,13 @@ def test(model_path):
 		print 'landmarks\n',X_test[:2,:]
 		# test real data
 		print '----------------test real data---------------'
-		landmarks=read_key_single('test-data/data/1.txt')
+		landmarks=read_key_all('test-data/data/')
 		print 'landmarks\n',landmarks
 		rp=pred.eval({x:landmarks})
-		print 'rotation param\n',rp
+		print rp
+		np.set_printoptions(suppress=True)	
+		print rp
+
 
 if __name__=='__main__':
 	

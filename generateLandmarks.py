@@ -1,14 +1,13 @@
 '''
 Generate 2D face landmarks using SFM
-Date: 2016/12/22
+Author: YadiraF 
+Mail: fengyao@sjtu.edu.cn
+Date: 2016/12/24
 '''
 import numpy as np
+import argparse
 import sys
-<<<<<<< HEAD
-sys.path.append('./eos-maked/bin/')
-=======
 sys.path.append('eos-maked/bin/')
->>>>>>> 20921d10cc62593895c9c574bf51bb100ce30e6d
 import eos
 from common import *
 #import matplotlib.pyplot as plt
@@ -53,24 +52,25 @@ def get_projection_matrix(p):
     P=intr.dot(extr)
     return P
 
+# show face and landmarks for verification
 def show(shape,landmarks_2D,P):
 	s2=P.dot(shape)
 	p2=landmarks_2D
-	#plt.plot(s2[0],s2[1],'b.')
 	plt.figure()
-	plt.plot(s2[0,:],s2[1,:],'b+')
-	plt.plot(p2[0],p2[1],'r.')
-	plt.plot(p2[0,0],p2[0,0],'wo')
-	#plt.axis([-150, 150, -150, 150]
+	plt.plot(s2[0,:],s2[1,:],'b+') # face
+	plt.plot(p2[0],p2[1],'r.') # landmarks
+	plt.plot(p2[0,0],p2[0,0],'wo') # center
+	#plt.axis([-150, 150, -150, 150] 
 
-def get_2D_landmarks(shape_param,rotation_param):
+# SFM
+# https://github.com/patrikhuber/eos
+def get_2D_landmarks(shape_param,rotation_param,p_len):
 
 	# get shape and 3D landmarks from SFM
 	model = eos.morphablemodel.load_model("3D-model/sfm_shape_3448.bin")
 	shape = model.get_shape_model().draw_sample(shape_param)
 	shape = np.array(shape)
-	#txt_name="3D-model/50_3D_point.txt" #50
-	txt_name="3D-model/9_3D_point.txt" #9
+	txt_name="3D-model/%d_3D_point.txt" % p_len
 	points_index=read_txt(txt_name)
 
 	# to homo cord
@@ -86,18 +86,28 @@ def get_2D_landmarks(shape_param,rotation_param):
 	# show (for test)
 	#show(shape,landmarks_2D,P)
 	landmarks_2D=landmarks_2D[:2,:]
+
 	return landmarks_2D
 
-	  
 def test(yaw,pitch,roll):
 	shape_param=[1.0, -0.5, 0.7]
 	rotation_param=[yaw,pitch,yaw]
 
-	get_2D_landmarks(shape_param,rotation_param)
+	landmarks_2D=get_2D_landmarks(shape_param,rotation_param)
+	print landmarks_2D
 
-def main_random():
-	examples_num=100
-	p_len=9
+def main_random(sample_args):
+	# sample params
+	p_len=sample_args.point_len
+	example_num=sample_args.face_num
+	print 'landmarks points length:',p_len
+	print 'face number:', example_num
+	print 'examples number:', example_num
+	# save path
+	save_folder=sample_args.save_folder
+	save_landmarks_path=save_folder+'lanmarks_'+str(p_len)+'_'+str(face_num)+'_test.txt'
+	save_rotation_param_path=save_folder+'rotation_param_'+str(p_len)+'_'+str(face_num)+'_test.txt'
+	# sample params
 	landmarks_2D_list=np.zeros((examples_num,2*p_len))
 	rotation_param_list=np.zeros((examples_num,3))
 	for i in range(examples_num):
@@ -112,50 +122,81 @@ def main_random():
 		#rotation_param=[y,p,r]
 		rotation_param=[y+np.random.sample()*2,p+np.random.sample()*2,r+np.random.sample()*2]
 		
-		landmarks_2D=get_2D_landmarks(shape_param,rotation_param)
+		landmarks_2D=get_2D_landmarks(shape_param,rotation_param,p_len)
 		landmarks_2D=normalize_landmarks(landmarks_2D,p_len)
 		landmarks_2D=np.reshape(landmarks_2D.T,(2*p_len))
 		landmarks_2D_list[i,:]=landmarks_2D
 		rotation_param_list[i,:]=np.array(rotation_param)
-		print 'example ',i
-	print '----save lists----'
-	np.savetxt('generated_landmarks/landmarks_9_test.txt',landmarks_2D_list)			
-	np.savetxt('generated_landmarks/rotation_param_9_test.txt',rotation_param_list)
+		
+		print '%d/%d faces have been processed' % (i+1,face_num)
 
-def main():
+	np.savetxt(save_landmarks_path,landmarks_2D_list)			
+	np.savetxt(save_rotation_param_path,rotation_param_list)
+	print '----files have been saved to ',save_landmarks_path,' and ',save_rotation_param_path
+
+def main(sample_args):
+	# sample params
+	p_len=sample_args.point_len
+	face_num=sample_args.face_num
+	print 'landmarks points length:',p_len
+	print 'face number:', face_num
+	# save path
+	save_folder=sample_args.save_folder
+	save_landmarks_path=save_folder+'lanmarks_'+str(p_len)+'_'+str(face_num)+'.txt'
+	save_rotation_param_path=save_folder+'rotation_param_'+str(p_len)+'_'+str(face_num)+'.txt'
+
+	# rotation param range
 	y_list=np.arange(-30,30,5)
 	p_list=np.arange(-25,25,5)
 	r_list=np.arange(-10,10,5)
-	p_len=9
-	face_num=10
 
 	examples_num=face_num*len(y_list)*len(p_list)*len(r_list)
 	print 'examples number:',examples_num
+
+	# initial  
 	landmarks_2D_list=np.zeros((examples_num,2*p_len))
 	rotation_param_list=np.zeros((examples_num,3))
 	count=0
+
 	for k in range(face_num):
+		# shape param
 		mu=2*np.random.random_sample()-1 #[-1,1]
 		sigma=np.random.random_sample()/2 #[0,0.5]
 		shape_param = np.random.normal(mu, sigma, 63)
-		# roll pitch yaw
+		# rotation param : yaw pitch roll
 		for y in y_list:
 			for p in p_list:
 				for r in r_list:
-					print count
-					rotation_param=[y+np.random.sample()*2,p+np.random.sample()*2,r+np.random.sample()*2]
+					rotation_param=[y+np.random.sample()*2,p+np.random.sample()*2,r+np.random.sample()*2] # add noise
 					#rotation_param=[y,p,r]
-					landmarks_2D=get_2D_landmarks(shape_param,rotation_param)
+					landmarks_2D=get_2D_landmarks(shape_param,rotation_param,p_len)
+					landmarks_2D=normalize_landmarks(landmarks_2D,p_len)
 					landmarks_2D=np.reshape(landmarks_2D.T,(2*p_len))
 					landmarks_2D_list[count,:]=landmarks_2D
 					rotation_param_list[count,:]=np.array(rotation_param)
 					count+=1
 					#print '-------------',rotation_param
-
-	print '----save lists----'
-	np.savetxt('generated_landmarks/landmarks_9_11250_3.txt',landmarks_2D_list)			
-	np.savetxt('generated_landmarks/rotation_param_9_11250_3.txt',rotation_param_list)
+		print '{}/{} faces have been processed'.format(k+1,face_num)
+		#sys.stdout.flush()  
+	np.savetxt(save_landmarks_path,landmarks_2D_list)			
+	np.savetxt(save_rotation_param_path,rotation_param_list)
+	print 'Files have been saved to ',save_landmarks_path,'and ',save_rotation_param_path
 
 if __name__ == '__main__':
-	main()
-	#main_random()
+	
+	parser = argparse.ArgumentParser()
+	parser.add_argument('--random_flag', type=int, default=0,
+						help='if 1, each face num generate 1 landmarks and save file path will be added with _test.')
+	parser.add_argument('--point_len', type=int, default=9,
+						help='the length of landmarks, 9 50 are supported now.')
+	parser.add_argument('--face_num', type=int, default=100,
+						help='the number of face to sample, each face generate 480 landmarks, the number of all examples = face_len*480.')
+	parser.add_argument('--save_folder', type=str, default='generated_landmarks/',
+						help='the folder to save files. landmarks(rotation parameter) will be saved in result/landmarks(rotation_param)_|point_len|_|face_len|.')
+	sample_args = parser.parse_args()
+	
+
+	if sample_args.random_flag==0:
+		main(sample_args)
+	else:
+		main_random(sample_args)
