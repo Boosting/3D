@@ -47,6 +47,7 @@ Special env: eos (only used in generate landmarks)
 
 The eos.so has been maked, but for using it, must have the Needed dependencies:  
 > Boost system (>=1.50.0), OpenCV core (>=2.4.3)  
+
 For more information about eos, please click https://github.com/patrikhuber/eos.  
 
 Also, you can use my computer to generate data:  
