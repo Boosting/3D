@@ -50,11 +50,11 @@ def read_key_single(name):
 	return landmark
 def read_key_all(folder):
 	examples_num=17
-	landmarks=np.zeros(examples,18)
+	landmarks=np.zeros((examples_num,18))
 	
 	for i in range(examples_num):
 		name=folder+str(i+1)+'.txt'
-		landmarks[i,:]=landmark
+		landmarks[i,:]=read_key_single(name)
 	return landmarks
 
 # normalize landmarks	

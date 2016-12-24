@@ -1,10 +1,13 @@
 '''
-A face gesture(yaw roll pitch) regression by landmarks data using TF
-Date: 2016/12/22
+Face rotation params(yaw roll pitch) regression with landmarks data as input using TF
+Author: YadiraF 
+Mail: fengyao@sjtu.edu.cn
+Date: 2016/12/24
 Ref: https://github.com/aymericdamien/TensorFlow-Examples/blob/master/notebooks/3_NeuralNetworks/multilayer_perceptron.ipynb 
 '''
 import tensorflow as tf
 import numpy as np
+import argparse
 from sklearn.utils import shuffle
 
 from common import *
@@ -46,13 +49,12 @@ y = tf.placeholder("float", [None, n_output])
 # Construct model
 pred=multilayer_perceptron(x,weights,biases)
 
-# Initializing the variables
-init=tf.initialize_all_variables()
-
 # 'Saver' op to save and restore all the variables
 saver = tf.train.Saver()
 
-def train(model_path):
+def train(args):
+	model_path=args.model_path
+	
 	# Parameters
 	learning_rate=0.03
 	training_epoches=5000
@@ -60,15 +62,11 @@ def train(model_path):
 	batch_size=5000
 
 	# Training Data
-	X_train=np.loadtxt("generated_landmarks/landmarks_9_train.txt")
-	Y_train=np.loadtxt("generated_landmarks/rotation_param_9_train.txt")
+	X_train=np.loadtxt(args.train_landmarks_path)
+	Y_train=np.loadtxt(args.train_rotation_param_path)
 	X_train,Y_train=shuffle(X_train,Y_train)
 	num_examples=X_train.shape[0]
-
-	# Test Data
-	X_test=np.loadtxt("generated_landmarks/landmarks_9_test.txt")
-	Y_test=np.loadtxt("generated_landmarks/rotation_param_9_test.txt")
-		
+	
 	# Define loss and optimizer
 	# mean squared error
 	#cost=tf.reduce_sum(tf.pow(pred-y,2))/num_examples
@@ -77,6 +75,9 @@ def train(model_path):
 	#cost=tf.reduce_mean(tf.square(pred-y),1)
 	optimizer=tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
 	#optimizer=tf.train.GradientDescentOptimizer(learning_rate=learning_rate).minimize(cost)
+
+	# Initializing the variables
+	init=tf.initialize_all_variables()
 
 	# Launch the graph
 	with tf.Session() as sess:
@@ -114,22 +115,21 @@ def train(model_path):
 		print '----------------'
 		print pd[:d,:]
 		print '----------------'
+		np.set_printoptions(suppress=True)	
 		print np.abs(pd-Y_train[:d,:])
 		print np.mean((pd-Y_train[:d,:])**2)
 		
-		print '----------------test data---------------'
-		pd=pred.eval({x:X_test[:d,:]})
-		print Y_test[:d,:]
-		print '----------------'
-		print pd[:d,:]
-		print '----------------'
-		print np.abs(pd-Y_test[:d,:])
-		print np.mean((pd-Y_test[:d,:])**2)
+def test(args):
+	model_path=args.model_path	
+	
+	# Initializing the variables
+	init=tf.initialize_all_variables()
 
-def test(model_path):
 	# Test Data
-	X_test=np.loadtxt("generated_landmarks/landmarks_9_test.txt")
-	Y_test=np.loadtxt("generated_landmarks/rotation_param_9_test.txt")
+	#X_test=np.loadtxt(args.test_landmarks_path)
+	X_test=read_key_all('test-data/data/')
+	if args.test_rotation_param_path !='':
+		Y_test=np.loadtxt(args.test_rotation_param_path)
 
 	with tf.Session() as sess:
 		sess.run(init)
@@ -138,29 +138,44 @@ def test(model_path):
 		load_path = saver.restore(sess, model_path)
 		print "Model restored from file: %s" % load_path
 		
-		# test data
-		d=10	
-		print '----------------test data---------------'
-		pd=pred.eval({x:X_test[:d,:]})
-		print Y_test[:d,:]
-		print '----------------'
-		print pd[:d,:]
-		print '----------------'
-		print np.abs(pd-Y_test[:d,:])
-		print np.mean(np.abs(pd-Y_test[:d,:]),1)
-		print 'landmarks\n',X_test[:2,:]
-		# test real data
-		print '----------------test real data---------------'
-		landmarks=read_key_all('test-data/data/')
-		print 'landmarks\n',landmarks
-		rp=pred.eval({x:landmarks})
-		print rp
-		np.set_printoptions(suppress=True)	
-		print rp
+		# output
+		output=pred.eval({x:X_test})
+		np.savetxt(args.output_rotation_param_path,output)
 
+		# show test result
+		d=6
+		print '----------------test data---------------'
+		print '--predicted answer--'
+		print output[:d,:]
+		print '----------------'
+		print '--- right answer---'
+		if args.test_rotation_param_path !='':
+			print Y_test[:d,:]
+			np.set_printoptions(suppress=True)	
+			print np.abs(output[:d,:]-Y_test[:d,:])
+			print np.mean(np.abs(output[:d,:]-Y_test[:d,:]),1)
 
 if __name__=='__main__':
-	
+
+	parser = argparse.ArgumentParser()
+	parser.add_argument('--train_flag', type=int, default=0,
+						help='if 1, will train the model')
+	parser.add_argument('--train_landmarks_path', type=str, default="generated-landmarks/landmarks_9_250.txt",
+						help='train landmarks path')
+	parser.add_argument('--train_rotation_param_path', type=str, default="generated-landmarks/rotation_param_9_250.txt",
+						help='train rotation param path')
+	parser.add_argument('--test_landmarks_path', type=str, default="generated-landmarks/landmarks_9_test.txt",
+						help='train landmarks path')
+	parser.add_argument('--test_rotation_param_path', type=str, default='',
+						help='train rotation param path')
+	parser.add_argument('--output_rotation_param_path', type=str, default='TF-model/output.txt',
+						help='output rotation param path')
+	parser.add_argument('--model_path', type=str, default='TF-model/model_250.ckpt',
+						help='model path')
+	args = parser.parse_args()
+		
 	# model path
-	model_path = "./TF-model/model_96000.ckpt"
-	test(model_path)
+	if args.train_flag:
+		train(args)
+	else:
+		test(args)
