@@ -99,10 +99,11 @@ def test(yaw,pitch,roll):
 def main_random(sample_args):
 	# sample params
 	p_len=sample_args.point_len
-	example_num=sample_args.face_num
+	face_num=sample_args.face_num
+	examples_num=sample_args.face_num
 	print 'landmarks points length:',p_len
-	print 'face number:', example_num
-	print 'examples number:', example_num
+	print 'face number:', face_num
+	print 'examples number:', examples_num
 	# save path
 	save_folder=sample_args.save_folder
 	save_landmarks_path=save_folder+'landmarks_'+str(p_len)+'_'+str(face_num)+'_test.txt'
@@ -186,12 +187,12 @@ if __name__ == '__main__':
 	
 	parser = argparse.ArgumentParser()
 	parser.add_argument('--random_flag', type=int, default=0,
-						help='if 1, each face num generate 1 landmarks and save file path will be added with _test.')
+						help='if 1, each face num generate 1 landmarks and save file path will be added with _test. default is 0')
 	parser.add_argument('--point_len', type=int, default=9,
 						help='the length of landmarks, 9 50 are supported now.')
 	parser.add_argument('--face_num', type=int, default=100,
 						help='the number of face to sample, each face generate 480 landmarks, the number of all examples = face_len*480.')
-	parser.add_argument('--save_folder', type=str, default='generated_landmarks/',
+	parser.add_argument('--save_folder', type=str, default='generated-landmarks/',
 						help='the folder to save files. landmarks(rotation parameter) will be saved in result/landmarks(rotation_param)_|point_len|_|face_len|.')
 	sample_args = parser.parse_args()
 	
