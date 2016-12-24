@@ -105,7 +105,7 @@ def main_random(sample_args):
 	print 'examples number:', example_num
 	# save path
 	save_folder=sample_args.save_folder
-	save_landmarks_path=save_folder+'lanmarks_'+str(p_len)+'_'+str(face_num)+'_test.txt'
+	save_landmarks_path=save_folder+'landmarks_'+str(p_len)+'_'+str(face_num)+'_test.txt'
 	save_rotation_param_path=save_folder+'rotation_param_'+str(p_len)+'_'+str(face_num)+'_test.txt'
 	# sample params
 	landmarks_2D_list=np.zeros((examples_num,2*p_len))
@@ -142,7 +142,7 @@ def main(sample_args):
 	print 'face number:', face_num
 	# save path
 	save_folder=sample_args.save_folder
-	save_landmarks_path=save_folder+'lanmarks_'+str(p_len)+'_'+str(face_num)+'.txt'
+	save_landmarks_path=save_folder+'landmarks_'+str(p_len)+'_'+str(face_num)+'.txt'
 	save_rotation_param_path=save_folder+'rotation_param_'+str(p_len)+'_'+str(face_num)+'.txt'
 
 	# rotation param range
