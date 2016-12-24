@@ -152,6 +152,7 @@ def test(args):
 		if args.test_rotation_param_path !='':
 			print Y_test[:d,:]
 			np.set_printoptions(suppress=True)	
+			print '--- differences---'
 			print np.abs(output[:d,:]-Y_test[:d,:])
 			print np.mean(np.abs(output[:d,:]-Y_test[:d,:]),1)
 
@@ -159,19 +160,19 @@ if __name__=='__main__':
 
 	parser = argparse.ArgumentParser()
 	parser.add_argument('--train_flag', type=int, default=0,
-						help='if 1, will train the model')
+						help='if 1, will train the model, default is 0')
 	parser.add_argument('--train_landmarks_path', type=str, default="generated-landmarks/landmarks_9_250.txt",
 						help='train landmarks path')
 	parser.add_argument('--train_rotation_param_path', type=str, default="generated-landmarks/rotation_param_9_250.txt",
 						help='train rotation param path')
-	parser.add_argument('--test_landmarks_path', type=str, default="generated-landmarks/landmarks_9_test.txt",
-						help='train landmarks path')
+	parser.add_argument('--test_landmarks_path', type=str, default="generated-landmarks/landmarks_9_100_test.txt",
+						help='test landmarks path')
 	parser.add_argument('--test_rotation_param_path', type=str, default='',
-						help='train rotation param path')
+						help='test rotation param path, for eval')
 	parser.add_argument('--output_rotation_param_path', type=str, default='TF-model/output.txt',
-						help='output rotation param path')
+						help='output rotation param path, for saving the result')
 	parser.add_argument('--model_path', type=str, default='TF-model/model_250.ckpt',
-						help='model path')
+						help='tensorflow model path')
 	args = parser.parse_args()
 		
 	# model path
