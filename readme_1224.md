@@ -46,11 +46,12 @@ Basic env: numpy tensorflow
 Special env: eos (only used in generate landmarks)  
 
 The eos.so has been maked, but for using it, must have the Needed dependencies:  
-> Boost system (>=1.50.0), OpenCV core (>=2.4.3)
+> Boost system (>=1.50.0), OpenCV core (>=2.4.3)  
+For more information about eos, please click https://github.com/patrikhuber/eos.  
 
 Also, you can use my computer to generate data:  
 IP: 192.168.50.82  
-the whole project is saved in: */home/fengyao/github/3D*  
+The whole project is saved in: */home/fengyao/github/3D*  
 
 If there is any question, please contact with me **after 01/09** !
 
